@@ -1,17 +1,25 @@
 from flask import Flask, render_template, request
 
+import parseRDF as prdf
+
 app = Flask(__name__)
+
+parse = prdf.RDFbase()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # Anni di nascita che puoi selezionare
-    birth_years = list(range(1950, 2025))
-
+    pers_sel = None
+    results = []
     if request.method == 'POST':
-        selected_year = request.form.get('birth_year')
-        return "Hai selezionato l'anno di nascita: {}".format(selected_year)
+        pers_sel = request.form.get('pers_sel')
+    # TO DEBUG
+    print(f"Persona selezionata: {pers_sel}")
+    
+    results = parse.parse_rdf(pers_sel)
 
-    return render_template('index.html', birth_years=birth_years)
+    return render_template('index.html', 
+                            pers_sel=pers_sel, 
+                            results=results)
 
 if __name__ == '__main__':
     app.run(debug=True)

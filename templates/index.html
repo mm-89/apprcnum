@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static',
-filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <header>
@@ -17,13 +16,29 @@ filename='styles.css') }}">
 
 
 <body>
-    <div class="box">
+
+        <form method="POST">
+
         <input 
             type="search" 
             id="search" 
+            name="pers_sel"
             placeholder="Search"   
             size="30"/>
-        <button class="test">Go!</button>
-    </div>
+        <input type="submit" value="search">
+
+        </form>
+
+        {% if results %}
+        <ul>
+            {% for result in results %}
+                Graphie: {{ result.graphie }}, Variante: {{ result.variante }}
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Nessun risultato trovato.</p>
+        {% endif %}
+
+
 </body>
 </html>
