@@ -36,20 +36,23 @@ class RDFbase:
         self.rdf_ans.parse(self.data_1549, format='ttl')
         self.rdf_ans.parse(self.data_1550, format='ttl')
 
-    def parse_rdf_ans(self, keyword):
+    def parse_rdf_ans(self, an, keyword):
         """
         Description
         """
+        
+        ans = ', '.join(f'"{a}"' for a in an)
 
         query = f"""
         SELECT ?seance ?date ?label ?texte
         WHERE {{
             ?seance a :Seance ;
-            rdfs:label ?label .
-            ?seance :date ?date .
-            ?seance :objet ?objet .
+             rdfs:label ?label ;
+             :date ?date ;
+             :objet ?objet .
             ?objet :texte ?texte .
             FILTER(CONTAINS(?texte, "{keyword}"))
+            FILTER(SUBSTR(STR(?date), 1, 4) IN ({ans}))
         }}
         """
         return self.rdf_ans.query(query)
@@ -59,9 +62,6 @@ class RDFbase:
         """
         Description
         """
-
-        # TO DEBUG
-        # print(f"Cercando varianti per: {keyword}")
 
         query = f"""
         SELECT ?graphie ?variante
@@ -73,12 +73,4 @@ class RDFbase:
             FILTER(STR(?graphie) = "{keyword}")
         }}
         """ 
-        
-        # PER DEBUG
-        #if qres:
-        #    for row in qres:
-        #        print(f"Graphie: {row.graphie}, Variante: {row.variante}")
-        #else:
-        #    print("La parola non ha varianti.")
-    
         return self.rdf_pers.query(query)
