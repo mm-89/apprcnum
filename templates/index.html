@@ -19,6 +19,18 @@
 
         <form method="POST">
 
+        <select name="cat_select" class="Input">
+            {% for cat in categorie %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="an_select" class="Input">
+            {% for an in ans %}
+            <option value="{{ an }}">{{ an }}</option>
+            {% endfor %}
+        </select>
+
         <input 
             type="search" 
             id="search" 
@@ -31,14 +43,19 @@
 
         {% if results %}
         <ul>
-            {% for result in results %}
-                Graphie: {{ result.graphie }}, Variante: {{ result.variante }}
-            {% endfor %}
+                {% for result in results %}
+                    {% if result.graphie %}
+                        Graphie: {{ result.graphie }}, Variante: {{ result.variante }}
+                    {% endif %}
+                    {% if result.label %}
+                        An: {{ result.date }}, Label: {{ result.label }}, Texte: {{ result.texte }}
+                    {% endif %}
+                    <br>
+                {% endfor %}
         </ul>
         {% else %}
             <p>Nessun risultato trovato.</p>
         {% endif %}
-
-
+        
 </body>
 </html>
