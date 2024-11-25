@@ -8,12 +8,12 @@ rdf = RDFbase()
 result = rdf.parse_rdf_texte()
 people = rdf.parse_rdf_personne()
 
-words = []
+phrases = []
 for row in result:
-    texte = row['texte']
-    if texte:
-        words.append(texte.split())
-        #print(words)
+    row_temp = row['texte']
+    if row_temp:
+        phrases.append(row_temp.split())
+#print(words)
 
 persons = []
 for row in people:
@@ -26,12 +26,15 @@ for row in people:
 val_distance = []
 val_word = []
 for ref in persons:
-    print(f"Reference person: {ref}")
-    for word in words:
-        distance = levenshtein_distance(ref, word)
-        #val_distance.append(distance)
-        if distance < 4:
-                val_word.append([ref, word])
+    #print(f"Reference person: {ref}")
+    for phrase in phrases:
+        for word in phrase:
+            word = word.rstrip('.')
+            distance = levenshtein_distance(ref, word)
+            #print(ref, word, distance)
+            #val_distance.append(distance)
+            if distance < 4:
+                    val_word.append([ref, word])
 
 for i in val_word:
     print(i)
