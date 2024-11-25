@@ -14,16 +14,16 @@ for row in result:
     if row_temp:
         phrases.append(row_temp.split())
 
-# divide the text into 2 or 3 parts equal in lenght
-# otherwise it crashes
-phrases = phrases[int(len(phrases)/2):]
-
 persons = []
 for row in people:
     texte = row['graphie']
     if texte:
         person_temp = texte.split()
         persons.append(person_temp[0])
+
+# divide the text into 2 or 3 parts equal in lenght
+# otherwise it crashes
+persons = persons[:int(len(persons)/2)]
 
 res = []
 for i, ref in enumerate(persons):
@@ -34,9 +34,10 @@ for i, ref in enumerate(persons):
             word = word.rstrip('.')
             word = word.rstrip(',')
             distance = levenshtein_distance(ref, word)/max(len(ref), len(word))
-            if(distance < 0.2 and distance > 0.0):
-                print(ref, word, distance)
-                res.append([ref, word, str(distance)])
+            if(distance > 0.0):
+                if(distance < 0.2):
+                    print(ref, word, distance)
+                    res.append([ref, word, str(distance)])
 
 np.savetxt("part1_0.2.csv", res, fmt='%s', delimiter=',')
 
