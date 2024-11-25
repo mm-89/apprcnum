@@ -14,7 +14,9 @@ for row in result:
     if row_temp:
         phrases.append(row_temp.split())
 
-phrases = phrases[:int(len(phrases)/2)]
+# divide the text into 2 or 3 parts equal in lenght
+# otherwise it crashes
+phrases = phrases[int(len(phrases)/2):]
 
 persons = []
 for row in people:
@@ -34,7 +36,7 @@ for i, ref in enumerate(persons):
             distance = levenshtein_distance(ref, word)/max(len(ref), len(word))
             if(distance < 0.2 and distance > 0.0):
                 print(ref, word, distance)
-                res.append([word, str(distance)])
+                res.append([ref, word, str(distance)])
 
-np.savetxt("part1_0.2.txt", res, fmt='%s', delimiter='\t')
+np.savetxt("part1_0.2.csv", res, fmt='%s', delimiter=',')
 
