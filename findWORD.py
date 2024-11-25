@@ -13,7 +13,8 @@ for row in result:
     row_temp = row['texte']
     if row_temp:
         phrases.append(row_temp.split())
-#print(words)
+
+phrases = phrases[:int(len(phrases)/2)]
 
 persons = []
 for row in people:
@@ -21,20 +22,19 @@ for row in people:
     if texte:
         person_temp = texte.split()
         persons.append(person_temp[0])
-        
 
-val_distance = []
-val_word = []
-for ref in persons:
+res = []
+for i, ref in enumerate(persons):
+    print(i/len(persons)*100)
     #print(f"Reference person: {ref}")
     for phrase in phrases:
         for word in phrase:
             word = word.rstrip('.')
-            distance = levenshtein_distance(ref, word)
-            #print(ref, word, distance)
-            #val_distance.append(distance)
-            if distance < 4:
-                    val_word.append([ref, word])
+            word = word.rstrip(',')
+            distance = levenshtein_distance(ref, word)/max(len(ref), len(word))
+            if(distance < 0.2 and distance > 0.0):
+                print(ref, word, distance)
+                res.append([word, str(distance)])
 
-for i in val_word:
-    print(i)
+np.savetxt("part1_0.2.txt", res, fmt='%s', delimiter='\t')
+
