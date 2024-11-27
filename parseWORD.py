@@ -1,6 +1,5 @@
 import rdflib
-import pprint
-from scipy.spatial.distance import hamming
+import re
 
 class RDFbase:
     """
@@ -38,23 +37,30 @@ class RDFbase:
         self.rdf_ans.parse(self.data_1550, format='ttl')
 
     def parse_rdf_personne(self):
-            """
-            Description
-            """
+        """
+        Description
+        """
+           
+        # write the query
+        query = """
+        SELECT ?graphie
+        WHERE {
+            ?x :graphie ?graphie .
+        }
+        """ 
 
-            query = """
-            SELECT ?graphie
-            WHERE {
-                ?x :graphie ?graphie .
-            }
-            """ 
-            return self.rdf_pers.query(query)
+        # evaluate the query
+        res = self.rdf_pers.query(query)
+        
+        # return the list
+        return [row[0].lower() for row in res if row['graphie']]
 
     def parse_rdf_texte(self):
         """
-        Esegui la query per ottenere il testo e stampalo.
+        Description
         """
         
+        # write the query
         query = """
         SELECT ?texte
         WHERE {
@@ -64,5 +70,13 @@ class RDFbase:
         }
         """
         
-        return self.rdf_ans.query(query)
+        # evaluate the query
+        res = self.rdf_ans.query(query)
 
+        # create a list of prashes
+        res_list = [row[0] for row in res if row['texte']]
+
+        res_list_clean = [re.findall(r'\b\w+\b', word) for word in res_list]
+
+        # return the list of words
+        return [item.lower() for sublist in res_list_clean for item in sublist]

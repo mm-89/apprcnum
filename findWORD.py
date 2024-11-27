@@ -1,43 +1,69 @@
 import numpy as np
 
+from kolmogorov import normalized_information_distance
+from levenshtein import levenshtein_distance
+
 from parseWORD import RDFbase
-from hamming_custom import hamming_distance
-from levenshtein_custom import levenshtein_distance
+
+def compute_distance(ref_people, words, threshold, method):
+    """
+    Compute distance between each ref_people
+    and all words on a text.
+
+    Parameters:
+    -----------
+    ref_people: (str) list
+        string list of reference name
+
+    words: (str) list
+        string of all the words we want
+        to compare with ref_people
+
+    threshold: int
+        threshold value 
+
+        (kolmokorov ~ 0.2 or less is good;
+        levenshtein ~ 0.2 or less is good)
+
+    method: str
+        method used to compute distance.
+        Avaiable:
+            - kolmogorov
+            - levenshtein
+
+    Return:
+    res: (str) list (n, 3)
+        list with ref_people the word
+        compared and the corresponding distance
+        minor or egual to the threshold 
+    """
+    res = []
+    if(method=="levenshtein"):
+
+        for i, ref_per in enumerate(people):
+            print(i/len(people)*100)
+            for word in words:
+                distance = levenshtein_distance(ref_per, word)
+                if(ref_per != word and distance < threshold):
+                    print(ref_per, word, distance)
+                    res.append([ref_per, word, str(distance)])
+
+    if(method=="kolmogorov"):
+
+        for i, ref_per in enumerate(people):
+            print(i/len(people)*100)
+            for word in words:
+                distance = normalized_information_distance(ref_per, word)
+                if(ref_per != word and distance < threshold):
+                    print(ref_per, word, distance)
+                    res.append([ref_per, word, str(distance)])
+
+    return res
 
 rdf = RDFbase()
-result = rdf.parse_rdf_texte()
+words = rdf.parse_rdf_texte()
 people = rdf.parse_rdf_personne()
 
-phrases = []
-for row in result:
-    row_temp = row['texte']
-    if row_temp:
-        phrases.append(row_temp.split())
+compute_distance(people, words, 0.2, "kolmogorov")
 
-persons = []
-for row in people:
-    texte = row['graphie']
-    if texte:
-        person_temp = texte.split()
-        persons.append(person_temp[0])
-
-# divide the text into 2 or 3 parts equal in lenght
-# otherwise it crashes
-persons = persons[:int(len(persons)/2)]
-
-res = []
-for i, ref in enumerate(persons):
-    print(i/len(persons)*100)
-    #print(f"Reference person: {ref}")
-    for phrase in phrases:
-        for word in phrase:
-            word = word.rstrip('.')
-            word = word.rstrip(',')
-            distance = levenshtein_distance(ref, word)/max(len(ref), len(word))
-            if(distance > 0.0):
-                if(distance < 0.2):
-                    print(ref, word, distance)
-                    res.append([ref, word, str(distance)])
-
-np.savetxt("part1_0.2.csv", res, fmt='%s', delimiter=',')
-
+# np.savetxt("part1_0.2.csv", res, fmt='%s', delimiter=',')

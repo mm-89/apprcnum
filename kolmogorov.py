@@ -22,7 +22,7 @@ def normalized_information_distance(string1, string2):
     k_x_y = c_xy - c_y
     k_y_x = c_yx - c_x
     
-    return max(k_x_y, k_y_x) / max(c_x, c_y)
+    return max(k_x_y, k_y_x) / max(c_x, c_y) if max(c_x, c_y) > 0 else 0
 
 def normalized_compression_distance(string1, string2):
     """
@@ -34,4 +34,4 @@ def normalized_compression_distance(string1, string2):
     c_y = kolmogorov_complexity(string2)
     c_xy = kolmogorov_complexity(string1 + string2)
     
-    return (c_xy - min(c_x, c_y)) / max(c_x, c_y)
+    return (c_xy - min(c_x, c_y)) / max(c_x, c_y) if max(c_x, c_y) > 0 else 0
