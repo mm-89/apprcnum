@@ -6,18 +6,22 @@ class RDFbase:
     """
     Description
     """
+    
+    # write here the path of rcnum-main folder
+    path = "../rcnum-main/"
+    
     # dorpdown menus
     categorie   = ['All', 'Personne', 'Object']
     ans         = ['All', '1545', '1546', '1547', '1548', '1549', '1550']
 
     # files location
-    data_pers = "kb/graphe/personnes.ttl"
-    data_1545 = "kb/graphe/RC1545.ttl"
-    data_1546 = "kb/graphe/RC1546.ttl"
-    data_1547 = "kb/graphe/RC1547.ttl"
-    data_1548 = "kb/graphe/RC1548.ttl"
-    data_1549 = "kb/graphe/RC1549.ttl"
-    data_1550 = "kb/graphe/RC1550.ttl"
+    data_pers = f"{path}kb/graphe/personnes.ttl"
+    data_1545 = f"{path}kb/graphe/RC1545.ttl"
+    data_1546 = f"{path}kb/graphe/RC1546.ttl"
+    data_1547 = f"{path}kb/graphe/RC1547.ttl"
+    data_1548 = f"{path}kb/graphe/RC1548.ttl"
+    data_1549 = f"{path}kb/graphe/RC1549.ttl"
+    data_1550 = f"{path}kb/graphe/RC1550.ttl"
        
     def __init__(self):
         """
@@ -49,18 +53,6 @@ class RDFbase:
             }
             """ 
             return self.rdf_pers.query(query)
-
-    def hamming_distance(word1, word2):
-        """
-        Description
-        """
-        word1 = word1.lower()
-        word2 = word2.lower()
-    
-        word1_list = list(word1)
-        word2_list = list(word2)
-        
-        return hamming(word1_list, word2_list)
 
     def parse_rdf_texte(self):
         """
