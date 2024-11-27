@@ -9,10 +9,6 @@ class RDFbase:
     
     # write here the path of rcnum-main folder
     path = "../rcnum-main/"
-    
-    # dorpdown menus
-    categorie   = ['All', 'Personne', 'Object']
-    ans         = ['All', '1545', '1546', '1547', '1548', '1549', '1550']
 
     # files location
     data_pers = f"{path}kb/graphe/personnes.ttl"
