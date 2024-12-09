@@ -50,6 +50,8 @@ def compute_distance(ref_people, words, threshold, method, phonetic_trans=False,
         compared and the corresponding distance
         minor or egual to the threshold 
     """
+    ref_people_origin = ref_people
+    words_origin = words
 
     # simple translitteration
     if(phonetic_trans):
@@ -79,7 +81,8 @@ def compute_distance(ref_people, words, threshold, method, phonetic_trans=False,
             for bef, aft in phonetic.items():
                 custom_transliterate[bef] = epi.transliterate(aft)
 
-            words = [''.join(custom_transliterate.get(char, char) for char in word) for word in words]
+                ref_people = [''.join(custom_transliterate.get(char, char) for char in peo) for peo in ref_people]
+                words = [''.join(custom_transliterate.get(char, char) for char in word) for word in words]
 
         print("Transliteration done!")
 
@@ -88,21 +91,22 @@ def compute_distance(ref_people, words, threshold, method, phonetic_trans=False,
 
         for i, ref_per in enumerate(ref_people):
             print(i/len(ref_people)*100)
-            for word in words:
+            for j, word in enumerate(words):
                 distance = levenshtein_distance(ref_per, word)
                 if(ref_per != word and distance < threshold):
                     print(ref_per, word, distance)
-                    res.append([ref_per, word, str(distance)])
+                    res.append([ref_people_origin[i], ref_per, words_origin[j], word, str(distance)])
 
     if(method=="kolmogorov"):
 
         for i, ref_per in enumerate(ref_people):
             print(i/len(ref_people)*100)
-            for word in words:
+            for j, word in enumerate(words):
                 distance = normalized_information_distance(ref_per, word)
-                if(ref_per != word and distance < threshold):
-                    print(ref_per, word, distance)
-                    res.append([ref_per, word, str(distance)])
+                if(ref_per != word):
+                    if(distance < threshold):
+                        #print(ref_per, word, distance)
+                        res.append([ref_people_origin[i], ref_per, words_origin[j], word, str(distane)])
 
     return res
 
@@ -110,6 +114,6 @@ rdf = RDFbase()
 words = rdf.parse_rdf_texte()
 people = rdf.parse_rdf_personne()
 
-res = compute_distance(people, words, 0.2, "levenshtein", phonetic_trans=True, custom_rules=True)
+res = compute_distance(people, words, 0.2, "kolmogorov", phonetic_trans=True, custom_rules=True)
 
 np.savetxt("example.csv", res, fmt='%s', delimiter=',')
