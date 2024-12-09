@@ -103,10 +103,9 @@ def compute_distance(ref_people, words, threshold, method, phonetic_trans=False,
             print(i/len(ref_people)*100)
             for j, word in enumerate(words):
                 distance = normalized_information_distance(ref_per, word)
-                if(ref_per != word):
-                    if(distance < threshold):
-                        #print(ref_per, word, distance)
-                        res.append([ref_people_origin[i], ref_per, words_origin[j], word, str(distane)])
+                if(ref_per != word and distance < threshold):
+                    #print(ref_per, word, distance)
+                    res.append([ref_people_origin[i], ref_per, words_origin[j], word, str(distance)])
 
     return res
 
@@ -114,6 +113,6 @@ rdf = RDFbase()
 words = rdf.parse_rdf_texte()
 people = rdf.parse_rdf_personne()
 
-res = compute_distance(people, words, 0.2, "kolmogorov", phonetic_trans=True, custom_rules=True)
+res = compute_distance(people, words, 0.2, "kolmogorov", phonetic_trans=True, custom_rules=False)
 
-np.savetxt("example.csv", res, fmt='%s', delimiter=',')
+np.savetxt("res_french.csv", res, fmt='%s', delimiter=',')
