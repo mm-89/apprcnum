@@ -3,10 +3,11 @@ import epitran
 
 from kolmogorov import normalized_information_distance
 from levenshtein import levenshtein_distance
+from phonetic_rules import phonetic
 
 from parseWORD import RDFbase
 
-def compute_distance(ref_people, words, threshold, method, phonetic=False):
+def compute_distance(ref_people, words, threshold, method, phonetic_trans=False, custom_rules=False):
     """
     Compute distance between each ref_people
     and all words on a text.
@@ -36,8 +37,11 @@ def compute_distance(ref_people, words, threshold, method, phonetic=False):
         is applied to the input strings and
         then the distance is computed between
         the phonetic translitteration.
-
-        !!!ONLY MODERN FRENCH SO FAR!!!
+    custom_rules: bool
+        if True, the custom rules (phonetic_rules)
+        are used to hybridize the french (modern french
+        plus the custom rules). If false the document
+        is translated in modern french.
 
     Return:
     -----------
@@ -46,10 +50,37 @@ def compute_distance(ref_people, words, threshold, method, phonetic=False):
         compared and the corresponding distance
         minor or egual to the threshold 
     """
-    if(phonetic):
+
+    # simple translitteration
+    if(phonetic_trans):
         epi = epitran.Epitran('fra-Latn')
         ref_people = [epi.transliterate(person) for person in ref_people]
         words = [epi.transliterate(word) for word in words]
+
+        # if custom rules included
+        #
+        # Concept used to include modern french
+        # plus custom rules:
+        # 
+        # translate in modern french the text
+        # AND the phonetic rules. Then replace
+        # in the text translated character of
+        # phonetic rules translated.
+        #
+        # text      ->        epitran(text)
+        #                           |
+        #                    text_replacement
+        #                           |
+        #                           v
+        # phonetic_rules -> epitran(phonetic_rules)
+        #
+        if(custom_rules):
+            custom_transliterate = {}
+            for bef, aft in phonetic.items():
+                custom_transliterate[bef] = epi.transliterate(aft)
+
+            words = [''.join(custom_transliterate.get(char, char) for char in word) for word in words]
+
         print("Transliteration done!")
 
     res = []
@@ -79,6 +110,6 @@ rdf = RDFbase()
 words = rdf.parse_rdf_texte()
 people = rdf.parse_rdf_personne()
 
-compute_distance(people, words, 0.2, "levenshtein", phonetic=True)
+res = compute_distance(people, words, 0.2, "levenshtein", phonetic_trans=True, custom_rules=True)
 
-# np.savetxt("part1_0.2.csv", res, fmt='%s', delimiter=',')
+np.savetxt("example.csv", res, fmt='%s', delimiter=',')
